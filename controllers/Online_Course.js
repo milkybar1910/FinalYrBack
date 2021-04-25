@@ -82,13 +82,23 @@ exports.createCourse = (req, res) => {
 
     //handle file here
     if (file.Certificate) {
-      if (file.Certificate > 3000000000000) {
+      if (file.Certificate.size > 2713907) {
         return res.status(400).json({
           error: "Certicate size too big!",
         });
       }
-      course.Certificate.data = fs.readFileSync(file.Certificate.path);
-      course.Certificate.contentType = file.Certificate.type;
+      if (
+        file.Certificate.type === "image/png" ||
+        file.Certificate.type === "image/jpg" ||
+        file.Certificate.type === "image/jpeg"
+      ) {
+        course.Certificate.data = fs.readFileSync(file.Certificate.path);
+        course.Certificate.contentType = file.Certificate.type;
+      } else {
+        return res.status(400).json({
+          error: "CERTIFICATE FORMAT SHOULD BE PNG/JPG/JPEG",
+        });
+      }
     } else {
       return res.status(400).json({
         error: "Certificate is missing",

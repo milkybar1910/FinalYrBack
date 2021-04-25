@@ -92,14 +92,12 @@ exports.createJobLetter = (req, res) => {
 
     //handle file here
     if (file.Certificate) {
-      if (file.Certificate > 3000000000000) {
+      if (file.Certificate.size > 2713907) {
         return res.status(400).json({
           error: "File size too big!",
         });
       }
-
       job.Certificate.data = fs.readFileSync(file.Certificate.path);
-
       job.Certificate.contentType = file.Certificate.type;
     }
 
