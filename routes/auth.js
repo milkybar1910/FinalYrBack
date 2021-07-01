@@ -3,7 +3,7 @@ var router = express.Router();
 
 const { check } = require("express-validator");
 
-const { signup, signin, signout } = require("../controllers/auth");
+const { signup, signin, signout,changePassword } = require("../controllers/auth");
 
 router.post(
   "/signup",
@@ -46,7 +46,7 @@ router.post(
   ],
   signin
 ); //completed
-
+router.put("/forgotPassword", changePassword);
 router.get("/signout", signout); //completed
 
 module.exports = router;

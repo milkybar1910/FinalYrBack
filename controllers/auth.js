@@ -126,6 +126,47 @@ exports.signout = (req, res) => {
   });
 };
 
+exports.changePassword = (req, res) => {
+  const { password } = req.body;
+  Student.findOne(
+    { "Primary Email ID": req.body["Primary Email ID"] },
+    (err, doc) => {
+      let salt = doc.salt;
+      const securePassword = (plainpassword) => {
+        if (!plainpassword) {
+          return "";
+        }
+        try {
+          return crypto
+            .createHmac("sha256", salt)
+            .update(plainpassword)
+            .digest("hex");
+        } catch (err) {
+          return "";
+        }
+      };
+
+      const updateData = { encry_password: securePassword(password) };
+
+      Student.findOneAndUpdate(
+        { "Primary Email ID": req.body["Primary Email ID"] },
+        updateData,
+        { useFindAndModify: false },
+        function (err, doc) {
+          if (err) {
+            return res.status(422).json({
+              error: errors.array()[0].msg,
+            });
+          }
+          return res.json({
+            success: "Password updated successfully",
+          });
+        }
+      );
+    }
+  );
+};
+
 //protected routes
 //completed
 exports.isSignedIn = expressJwt({
