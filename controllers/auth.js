@@ -145,7 +145,7 @@ exports.changePassword = (req, res) => {
         }
       };
 
-      const updateData = { encry_password: securePassword(req.body["confirmPassword"]) };
+      const updateData = { "encry_password": securePassword(req.body["confirmPassword"]) };
 
       Student.findOneAndUpdate(
         { "Primary Email ID": req.body["Primary Email ID"] },
@@ -159,6 +159,7 @@ exports.changePassword = (req, res) => {
           }
           return res.json({
             success: "Password updated successfully",
+            "password":updateData.encry_password
           });
         }
       );
