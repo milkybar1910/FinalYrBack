@@ -131,14 +131,13 @@ exports.changePassword = (req, res) => {
   Student.findOne(
     { "Primary Email ID": req.body["Primary Email ID"] },
     (err, doc) => {
-      let salt = doc.salt;
       const securePassword = (plainpassword) => {
         if (!plainpassword) {
-          return "";
+          return "passwordNotFound";
         }
         try {
           return crypto
-            .createHmac("sha256", salt)
+            .createHmac("sha256", doc.salt)
             .update(plainpassword)
             .digest("hex");
         } catch (err) {
@@ -146,7 +145,7 @@ exports.changePassword = (req, res) => {
         }
       };
 
-      const updateData = { encry_password: securePassword(password) };
+      const updateData = { encry_password: securePassword(req.body["password"]) };
 
       Student.findOneAndUpdate(
         { "Primary Email ID": req.body["Primary Email ID"] },
