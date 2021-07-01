@@ -159,7 +159,7 @@ exports.changePassword = (req, res) => {
           }
           return res.json({
             success: "Password updated successfully",
-            "password":updateData.encry_password
+            "password":updateData["encry_password"]
           });
         }
       );
