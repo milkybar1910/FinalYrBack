@@ -3,7 +3,6 @@ const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const expressJwt = require("express-jwt");
 const { v4: uuidv4 } = require("uuid");
-const expressJwt = require("express-jwt");
 const crypto = require("crypto");
 
 //SIGNUP THE USER/ADMIN
@@ -131,12 +130,13 @@ exports.signout = (req, res) => {
 
 exports.changePassword = (req, res) => {
   const { password } = req.body;
+
   Student.findOne(
     { "Primary Email ID": req.body["Primary Email ID"] },
     (err, doc) => {
       const securePassword = (plainpassword) => {
         if (!plainpassword) {
-          return "passwordNotFound";
+          return "";
         }
         try {
           return crypto
@@ -148,9 +148,11 @@ exports.changePassword = (req, res) => {
         }
       };
 
+      const updateData = { encry_password: securePassword(password) };
+
       Student.findOneAndUpdate(
         { "Primary Email ID": req.body["Primary Email ID"] },
-        { "encry_password": securePassword(req.body["confirmPassword"]) },
+        updateData,
         { useFindAndModify: false },
         function (err, doc) {
           if (err) {
@@ -160,7 +162,6 @@ exports.changePassword = (req, res) => {
           }
           return res.json({
             success: "Password updated successfully",
-            "password":req.body["confirmPassword"]
           });
         }
       );
