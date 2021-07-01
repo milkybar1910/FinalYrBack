@@ -2,6 +2,9 @@ const Student = require("../models/student");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const expressJwt = require("express-jwt");
+const { v4: uuidv4 } = require("uuid");
+const expressJwt = require("express-jwt");
+const crypto = require("crypto");
 
 //SIGNUP THE USER/ADMIN
 //completed
