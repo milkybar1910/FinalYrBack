@@ -1,7 +1,8 @@
 const Course = require("../models/Online_Course");
 const formidable = require("formidable");
 const fs = require("fs");
-
+const JSZip = require("jszip");
+var zip = new JSZip();
 exports.getCourseById = (req, res, next, id) => {
   Course.findById(id).exec((err, course) => {
     if (err) {
