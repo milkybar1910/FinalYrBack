@@ -153,19 +153,19 @@ exports.photo = (req, res, next) => {
 };
 
 //completed
-exports.getCourseinAdmin = (req, res) => {
-  const { year } = req.params;
-  Course.find({ Batch: year })
-    .select("-_id -__v -user")
-    .exec((err, student) => {
-      if (err || !student) {
-        return res.status(400).json({
-          error: "No student was found in DB",
-        });
-      }
-      return res.send(student);
-    });
-};
+// exports.getCourseinAdmin = (req, res) => {
+//   const { year } = req.params;
+//   Course.find({ Batch: year })
+//     .select("-_id -__v -user")
+//     .exec((err, student) => {
+//       if (err || !student) {
+//         return res.status(400).json({
+//           error: "No student was found in DB",
+//         });
+//       }
+//       return res.send(student);
+//     });
+// };
 
 //completed
 exports.deleteCourse = (req, res) => {
@@ -181,4 +181,37 @@ exports.deleteCourse = (req, res) => {
       deletedCourse,
     });
   });
+};
+
+// TODO:
+exports.getCourseinAdmin = (req, res) => {
+  const { year } = req.params;
+  Course.find({ Batch: year })
+    .select("-_id -__v -user")
+    .exec((err, student) => {
+      if (err || !student) {
+        return res.status(400).json({
+          error: "No student was found in DB",
+        });
+      }
+      student.map((data, index) =>
+       {
+        zip.file(
+          `${data["Register Number"]}(${index}).png`,
+          data.Certificate?.data.buffer,
+          {
+            base64: true,
+          }
+        )
+       }
+      );
+
+      zip.generateAsync({ type: "nodebuffer" }).then(function (content) {
+        res.writeHead(200, {
+          "Content-Type": "application/zip",
+          "Content-disposition": `attachment; filename=user_report.zip`,
+        });
+        res.end(content);
+      });
+    });
 };
