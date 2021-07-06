@@ -1,6 +1,7 @@
 const Course = require("../models/Online_Course");
 const formidable = require("formidable");
 const fs = require("fs");
+
 const JSZip = require("jszip");
 var zip = new JSZip();
 
@@ -86,7 +87,7 @@ exports.createCourse = (req, res) => {
 
     //handle file here
     if (file.Certificate) {
-      if (file.Certificate.size > 2713907) {
+      if (file.Certificate.size > 1048576) {
         return res.status(400).json({
           error: "Certicate size too big!",
         });
@@ -157,21 +158,6 @@ exports.photo = (req, res, next) => {
 };
 
 //completed
-// exports.getCourseinAdmin = (req, res) => {
-//   const { year } = req.params;
-//   Course.find({ Batch: year })
-//     .select("-_id -__v -user")
-//     .exec((err, student) => {
-//       if (err || !student) {
-//         return res.status(400).json({
-//           error: "No student was found in DB",
-//         });
-//       }
-//       return res.send(student);
-//     });
-// };
-
-//completed
 exports.deleteCourse = (req, res) => {
   let course = req.course;
   course.remove((err, deletedCourse) => {
@@ -187,7 +173,22 @@ exports.deleteCourse = (req, res) => {
   });
 };
 
-// TODO:
+//completed
+// exports.getCourseinAdmin = (req, res) => {
+//   const { year } = req.params;
+//   Course.find({ Batch: year })
+//     .select("-_id -__v -user")
+//     .exec((err, student) => {
+//       if (err || !student) {
+//         return res.status(400).json({
+//           error: "No student was found in DB",
+//         });
+//       }
+//       return res.send(student);
+//     });
+// };
+
+//todo:check for the errors
 exports.getCourseinAdmin = (req, res) => {
   const { year } = req.params;
   Course.find({ Batch: year })
@@ -205,7 +206,7 @@ exports.getCourseinAdmin = (req, res) => {
           });
         
           zip.file("OnlineCourse.csv",csvData);
-          Course.find({ Batch: year })
+        Course.find({ Batch: year })
           .select(["Register Number", "Certificate"])
           .exec((err, dataBlog) => {
             if (err || !dataBlog) {
@@ -246,6 +247,7 @@ exports.getCourseinAdmin = (req, res) => {
           });
       }
       else{
+
         return res.json({
           "err":"SDFAsd"
         });

@@ -1,6 +1,7 @@
 const Job = require("../models/JobLetter");
 const formidable = require("formidable");
 const fs = require("fs");
+const JobLetter = require( "../models/JobLetter" );
 
 exports.getJobLetterById = (req, res, next, id) => {
   Job.findById({ _id: id }).exec((err, job) => {
@@ -135,20 +136,20 @@ exports.getJob = (req, res) => {
     });
 };
 
-//completed
-exports.getJobinAdmin = (req, res) => {
-  const { year } = req.params;
-  Job.find({ Batch: year })
-    .select("-_id -user -__v ")
-    .exec((err, jobResult) => {
-      if (err || !jobResult) {
-        return res.status(400).json({
-          error: "no student was found in DB",
-        });
-      }
-      return res.json(jobResult);
-    });
-};
+// //completed
+// exports.getJobinAdmin = (req, res) => {
+//   const { year } = req.params;
+//   Job.find({ Batch: year })
+//     .select("-_id -user -__v ")
+//     .exec((err, jobResult) => {
+//       if (err || !jobResult) {
+//         return res.status(400).json({
+//           error: "no student was found in DB",
+//         });
+//       }
+//       return res.json(jobResult);
+//     });
+// };
 
 //completed
 exports.pdf = (req, res, next) => {
@@ -175,4 +176,71 @@ exports.deleteJob = (req, res) => {
       deletedJob,
     });
   });
+};
+
+//todo:check for the errors
+exports.getJobinAdmin = (req, res) => {
+  const { year } = req.params;
+  JobLetter.find({ Batch: year })
+    .select("-_id -__v -user -Certificate")
+    .exec((err, joboffer) => {
+      if (err || !joboffer) {
+        return res.status(400).json({
+          error: "No student was found in DB",
+        });
+      }
+      if (joboffer.length > 0) {
+          // Convert json to csv function
+          const csvData = csvjson.toCSV(JSON.stringify(joboffer), {
+              headers: 'key'
+          });
+        
+          zip.file("JobLetter.csv",csvData);
+          JobLetter.find({ Batch: year })
+          .select(["Register Number", "Certificate"])
+          .exec((err, dataBlog) => {
+            if (err || !dataBlog) {
+              return res.status(400).json({
+                error: "No certificate was found in DB",
+              });
+            }
+            dataBlog.map((data, index) => {
+              zip.file(
+                `${data["Register Number"]}(${index}).png`,
+                data.Certificate?.data.buffer,
+                {
+                  compression: "DEFLATE",
+                  compressionOptions: {
+                    level: 9, // force a compression and a compression level for this file
+                  },
+                  base64: true,
+                }
+              );
+            });
+
+            zip
+              .generateAsync({
+                type: "nodebuffer",
+                compression: "DEFLATE",
+                compressionOptions: {
+                  level: 9,
+                },
+              })
+              .then(function (content) {
+                res.set( {
+                  "Content-Type": "application/zip",
+                });
+               return  res.end(
+                  content
+                );
+              });
+          });
+      }
+      else{
+
+        return res.json({
+          "err":"SDFAsd"
+        });
+      }
+    });
 };

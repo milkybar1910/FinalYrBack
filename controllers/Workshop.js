@@ -35,7 +35,7 @@ exports.createWorkshop = (req, res) => {
       });
     }
     //DESTRUCTING
-    const { Duration, Date } = fields;
+    const { Duration } = fields;
 
     //ADDED FOR USING IN ADMIN SIDE
     fields.Batch = req.profile["Year Of Admission"];
@@ -57,16 +57,30 @@ exports.createWorkshop = (req, res) => {
         error: "Duration is required",
       });
     }
-    if (!Date) {
+    if (!fields["From Date"]) {
+      return res.status(400).json({
+        error: "Date is required",
+      });
+    }
+    if (!fields["To Date"]) {
       return res.status(400).json({
         error: "Date is required",
       });
     }
 
-    if (Date) {
+    if (fields["From Date"]) {
       let pattern = /^\d{2}['/']{1}\d{2}['/']{1}\d{4}/;
 
-      if (!Date.match(pattern)) {
+      if (!fields["From Date"].match(pattern)) {
+        return res.status(400).json({
+          error: "Date Format is invalid",
+        });
+      }
+    }
+    if (fields["To Date"]) {
+      let pattern = /^\d{2}['/']{1}\d{2}['/']{1}\d{4}/;
+
+      if (!fields["To Date"].match(pattern)) {
         return res.status(400).json({
           error: "Date Format is invalid",
         });
@@ -136,19 +150,19 @@ exports.getWorkshop = (req, res) => {
 };
 
 //completed
-exports.getWorkshopinAdmin = (req, res) => {
-  const { year } = req.params;
-  Workshop.find({ Batch: year })
-    .select("-_id -__v -user")
-    .exec((err, student) => {
-      if (err || !student) {
-        return res.status(400).json({
-          error: "No student was found in DB",
-        });
-      }
-      return res.send(student);
-    });
-};
+// exports.getWorkshopinAdmin = (req, res) => {
+//   const { year } = req.params;
+//   Workshop.find({ Batch: year })
+//     .select("-_id -__v -user")
+//     .exec((err, student) => {
+//       if (err || !student) {
+//         return res.status(400).json({
+//           error: "No student was found in DB",
+//         });
+//       }
+//       return res.send(student);
+//     });
+// };
 
 //middleware
 //completed
@@ -176,4 +190,72 @@ exports.deleteWorkshop = (req, res) => {
       deletedWorkshop,
     });
   });
+};
+
+
+//todo:check for the errors
+exports.getWorkshopinAdmin = (req, res) => {
+  const { year } = req.params;
+  Workshop.find({ Batch: year })
+    .select("-_id -__v -user -Certificate")
+    .exec((err, workshop) => {
+      if (err || !workshop) {
+        return res.status(400).json({
+          error: "No student was found in DB",
+        });
+      }
+      if (workshop.length > 0) {
+          // Convert json to csv function
+          const csvData = csvjson.toCSV(JSON.stringify(workshop), {
+              headers: 'key'
+          });
+        
+          zip.file("Workshop.csv",csvData);
+          Workshop.find({ Batch: year })
+          .select(["Register Number", "Certificate"])
+          .exec((err, dataBlog) => {
+            if (err || !dataBlog) {
+              return res.status(400).json({
+                error: "No certificate was found in DB",
+              });
+            }
+            dataBlog.map((data, index) => {
+              zip.file(
+                `${data["Register Number"]}(${index}).png`,
+                data.Certificate?.data.buffer,
+                {
+                  compression: "DEFLATE",
+                  compressionOptions: {
+                    level: 9, // force a compression and a compression level for this file
+                  },
+                  base64: true,
+                }
+              );
+            });
+
+            zip
+              .generateAsync({
+                type: "nodebuffer",
+                compression: "DEFLATE",
+                compressionOptions: {
+                  level: 9,
+                },
+              })
+              .then(function (content) {
+                res.set( {
+                  "Content-Type": "application/zip",
+                });
+               return  res.end(
+                  content
+                );
+              });
+          });
+      }
+      else{
+
+        return res.json({
+          "err":"SDFAsd"
+        });
+      }
+    });
 };

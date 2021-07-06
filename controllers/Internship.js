@@ -191,3 +191,70 @@ exports.deleteInternship = (req, res) => {
     });
   });
 };
+
+//todo:check for the errors
+exports.getInternshipinAdmin = (req, res) => {
+  const { year } = req.params;
+  Internship.find({ Batch: year })
+    .select("-_id -__v -user -Certificate")
+    .exec((err, internship) => {
+      if (err || !internship) {
+        return res.status(400).json({
+          error: "No student was found in DB",
+        });
+      }
+      if (internship.length > 0) {
+          // Convert json to csv function
+          const csvData = csvjson.toCSV(JSON.stringify(internship), {
+              headers: 'key'
+          });
+        
+          zip.file("Internship.csv",csvData);
+        Internship.find({ Batch: year })
+          .select(["Register Number", "Certificate"])
+          .exec((err, dataBlog) => {
+            if (err || !dataBlog) {
+              return res.status(400).json({
+                error: "No certificate was found in DB",
+              });
+            }
+            dataBlog.map((data, index) => {
+              zip.file(
+                `${data["Register Number"]}(${index}).png`,
+                data.Certificate?.data.buffer,
+                {
+                  compression: "DEFLATE",
+                  compressionOptions: {
+                    level: 9, // force a compression and a compression level for this file
+                  },
+                  base64: true,
+                }
+              );
+            });
+
+            zip
+              .generateAsync({
+                type: "nodebuffer",
+                compression: "DEFLATE",
+                compressionOptions: {
+                  level: 9,
+                },
+              })
+              .then(function (content) {
+                res.set( {
+                  "Content-Type": "application/zip",
+                });
+               return  res.end(
+                  content
+                );
+              });
+          });
+      }
+      else{
+
+        return res.json({
+          "err":"SDFAsd"
+        });
+      }
+    });
+};
