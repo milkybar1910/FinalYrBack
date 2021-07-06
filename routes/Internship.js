@@ -31,7 +31,7 @@ router.get("/internship/details/info/:userInternFetchId", getInternship);
 router.get("/internship/certificate/:internshipId", photo);
 
 //route in adminView->Batch.js
-router.get("/intern/year/:id/:year", getInternshipinAdmin);
+router.get("/internship/year/:id/:year", getInternshipinAdmin);
 
 // delete route
 //route in studenview->studentHome.js
