@@ -3,6 +3,9 @@ const formidable = require("formidable");
 const fs = require("fs");
 const JSZip = require("jszip");
 var zip = new JSZip();
+
+const csvjson  = require("csvjson");
+
 exports.getCourseById = (req, res, next, id) => {
   Course.findById(id).exec((err, course) => {
     if (err) {
@@ -188,31 +191,64 @@ exports.deleteCourse = (req, res) => {
 exports.getCourseinAdmin = (req, res) => {
   const { year } = req.params;
   Course.find({ Batch: year })
-    .select("-_id -__v -user")
-    .exec((err, student) => {
-      if (err || !student) {
+    .select("-_id -__v -user -Certificate")
+    .exec((err, course) => {
+      if (err || !course) {
         return res.status(400).json({
           error: "No student was found in DB",
         });
       }
-      student.map((data, index) =>
-       {
-        zip.file(
-          `${data["Register Number"]}(${index}).png`,
-          data.Certificate?.data.buffer,
-          {
-            base64: true,
-          }
-        )
-       }
-      );
+      if (course.length > 0) {
+          // Convert json to csv function
+          const csvData = csvjson.toCSV(JSON.stringify(course), {
+              headers: 'key'
+          });
+        
+          zip.file("OnlineCourse.csv",csvData);
+          Course.find({ Batch: year })
+          .select(["Register Number", "Certificate"])
+          .exec((err, dataBlog) => {
+            if (err || !dataBlog) {
+              return res.status(400).json({
+                error: "No certificate was found in DB",
+              });
+            }
+            dataBlog.map((data, index) => {
+              zip.file(
+                `${data["Register Number"]}(${index}).png`,
+                data.Certificate?.data.buffer,
+                {
+                  compression: "DEFLATE",
+                  compressionOptions: {
+                    level: 9, // force a compression and a compression level for this file
+                  },
+                  base64: true,
+                }
+              );
+            });
 
-      zip.generateAsync({ type: "nodebuffer" }).then(function (content) {
-        res.writeHead(200, {
-          "Content-Type": "application/zip",
-          "Content-disposition": `attachment; filename=user_report.zip`,
+            zip
+              .generateAsync({
+                type: "nodebuffer",
+                compression: "DEFLATE",
+                compressionOptions: {
+                  level: 9,
+                },
+              })
+              .then(function (content) {
+                res.set( {
+                  "Content-Type": "application/zip",
+                });
+               return  res.end(
+                  content
+                );
+              });
+          });
+      }
+      else{
+        return res.json({
+          "err":"SDFAsd"
         });
-        res.end(content);
-      });
+      }
     });
 };
