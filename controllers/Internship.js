@@ -92,7 +92,7 @@ exports.createInternship = (req, res) => {
 
     //handle file here
     if (file.Certificate) {
-      if (file.Certificate.size > 2713907) {
+      if (file.Certificate.size > 1048576) {
         return res.status(400).json({
           error: "Certificate size too big!",
         });
