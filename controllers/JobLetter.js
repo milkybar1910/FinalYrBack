@@ -2,7 +2,10 @@ const Job = require("../models/JobLetter");
 const formidable = require("formidable");
 const fs = require("fs");
 const JobLetter = require( "../models/JobLetter" );
+const JSZip = require("jszip");
+var zip = new JSZip();
 
+const csvjson  = require("csvjson");
 exports.getJobLetterById = (req, res, next, id) => {
   Job.findById({ _id: id }).exec((err, job) => {
     if (err) {

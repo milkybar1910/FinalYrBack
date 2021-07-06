@@ -2,7 +2,10 @@ const Workshop = require("../models/Workshop");
 const formidable = require("formidable");
 const fs = require("fs");
 const { validationResult } = require("express-validator");
+const JSZip = require("jszip");
+var zip = new JSZip();
 
+const csvjson  = require("csvjson");
 exports.getWorkshopById = (req, res, next, id) => {
   Workshop.findById(id).exec((err, workshop) => {
     if (err) {

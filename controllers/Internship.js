@@ -1,7 +1,10 @@
 const Internship = require("../models/Internship");
 const formidable = require("formidable");
 const fs = require("fs");
+const JSZip = require("jszip");
+var zip = new JSZip();
 
+const csvjson  = require("csvjson");
 //completed
 exports.getInternshipById = (req, res, next, id) => {
   Internship.findById(id).exec((err, internship) => {
