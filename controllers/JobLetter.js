@@ -35,6 +35,11 @@ exports.createJobLetter = (req, res) => {
     fields["Register Number"] = req.profile["Register Number"];
     fields["Full Name"] = req.profile["Full Name"];
 
+    if(!fields["Full Name"]) {
+      return  res.status(400).json({
+        error:"Update the 'PROFILE' first"
+      })
+    }
     if (!fields["Job Title"]) {
       return res.status(400).json({
         error: "Job Title is required",
@@ -209,7 +214,7 @@ exports.getJobinAdmin = (req, res) => {
             }
             dataBlog.map((data, index) => {
               zip.file(
-                `${data["Register Number"]}(${index}).png`,
+                `${data["Register Number"]}(${index}).pdf`,
                 data.Certificate?.data.buffer,
                 {
                   compression: "DEFLATE",

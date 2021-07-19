@@ -36,7 +36,12 @@ exports.createInternship = (req, res) => {
     fields.Batch = req.profile["Year Of Admission"];
     fields["Register Number"] = req.profile["Register Number"];
     fields["Full Name"] = req.profile["Full Name"];
-
+    
+    if(!fields["Full Name"]) {
+      return  res.status(400).json({
+        error:"Update the 'PROFILE' first"
+      })
+    }
     if (!fields["Job Name"]) {
       return res.status(400).json({
         error: "Job Name is required",
