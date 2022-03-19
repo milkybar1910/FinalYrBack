@@ -4,14 +4,12 @@ const Student = require("../models/student");
 
 exports.createFormField = (req, res) => {
   let DynamicForms = new DynamicForm(req.body);
-
   DynamicForms.save((err, request) => {
     if (err) {
       return res.status(400).json({
         error: "NOT able to save user in Database",
       });
     }
-
     return res.json({ message: "SUCESSFULLY POSTED" });
   });
 };

@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const ToggleSchema = new mongoose.Schema({
-  intern: {
+  internship: {
     type: Boolean,
     default: false,
   },

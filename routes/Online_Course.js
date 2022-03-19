@@ -29,7 +29,7 @@ router.post(
 router.get("/course/details/info/:userCourseFetchId", getCourse);
 router.get("/course/certificate/:courseId", photo);
 
-router.get("/course/year/:id/:year", getCourseinAdmin);
+router.get("/Course/year/:id/:year", getCourseinAdmin);
 
 //delete route
 router.delete("/course/delete/:courseId", deleteCourse);

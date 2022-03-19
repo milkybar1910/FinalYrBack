@@ -1,16 +1,16 @@
 const mongoose = require("mongoose");
 
-const DynamicFormSchema = new mongoose.Schema({
-  FormName: {
-    type: String,
+const DynamicFormSchema = new mongoose.Schema(
+  {
+    "Form Name": {
+      type: String,
+    },
+    Batch: {
+      type: String,
+    },
+    Fields: [],
   },
-  Description: {
-    type: String,
-  },
-  Batch: {
-    type: String,
-  },
-  Values: {},
-});
+  { timestamps: true }
+);
 
 module.exports = mongoose.model("DynamicForm", DynamicFormSchema);

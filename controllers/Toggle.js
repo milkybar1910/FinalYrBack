@@ -10,6 +10,7 @@ exports.ToggleChange = (req, res) => {
             error: "Not able to update ",
           });
         }
+
         return res.json({
           message: "Updated Successfully ",
         });
@@ -47,3 +48,22 @@ exports.ToggleDetails = (req, res) => {
     }
   });
 };
+
+// const temp = () => {
+//   let body = {
+//     internship: false,
+//     workshop: false,
+//     joboffer: false,
+//     course: false,
+//     profile: false,
+//   };
+//   let toggle = new Toggle(body);
+//   toggle.save((err, value) => {
+//     if (err) {
+//       console.log(err);
+//     } else {
+//       console.log(value);
+//     }
+//   });
+// };
+// temp();

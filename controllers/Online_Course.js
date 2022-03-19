@@ -1,11 +1,9 @@
 const Course = require("../models/Online_Course");
 const formidable = require("formidable");
 const fs = require("fs");
-
 const JSZip = require("jszip");
 var zip = new JSZip();
-
-const csvjson  = require("csvjson");
+const csvjson = require("csvjson");
 
 exports.getCourseById = (req, res, next, id) => {
   Course.findById(id).exec((err, course) => {
@@ -19,7 +17,6 @@ exports.getCourseById = (req, res, next, id) => {
   });
 };
 
-//completed
 exports.createCourse = (req, res) => {
   let form = new formidable.IncomingForm();
   form.keepExtensions = true;
@@ -30,90 +27,9 @@ exports.createCourse = (req, res) => {
         error: "Problem with certificate",
       });
     }
-    //DESTRUCTING
-    const { Duration, From, To } = fields;
-
-    //ADDED FOR USING IN ADMIN SIDE
-    fields.Batch = req.profile["Year Of Admission"];
-    fields["Register Number"] = req.profile["Register Number"];
-    fields["Full Name"] = req.profile["Full Name"];
-
-    if(!fields["Full Name"]) {
-      return  res.status(400).json({
-        error:"Update the 'PROFILE' first"
-      })
-    }
-    if (!fields["Course Name"]) {
-      return res.status(400).json({
-        error: "Course Name is required",
-      });
-    }
-    if (!fields["Platform Name"]) {
-      return res.status(400).json({
-        error: "Platform Name is required",
-      });
-    }
-    if (!Duration) {
-      return res.status(400).json({
-        error: "Duration is required",
-      });
-    }
-    if (!From) {
-      return res.status(400).json({
-        error: "From Date is required",
-      });
-    }
-    if (From) {
-      let pattern = /^\d{2}['/']{1}\d{2}['/']{1}\d{4}/;
-
-      if (!From.match(pattern)) {
-        return res.status(400).json({
-          error: "From Date Format is invalid",
-        });
-      }
-    }
-
-    if (!To) {
-      return res.status(400).json({
-        error: "To Date is required",
-      });
-    }
-    if (To) {
-      let pattern = /^\d{2}['/']{1}\d{2}['/']{1}\d{4}/;
-
-      if (!To.match(pattern)) {
-        return res.status(400).json({
-          error: "To Date Format is invalid",
-        });
-      }
-    }
-
     let course = new Course(fields);
-
-    //handle file here
-    if (file.Certificate) {
-      if (file.Certificate.size > 1048576) {
-        return res.status(400).json({
-          error: "Certicate size too big!",
-        });
-      }
-      if (
-        file.Certificate.type === "image/png" ||
-        file.Certificate.type === "image/jpg" ||
-        file.Certificate.type === "image/jpeg"
-      ) {
-        course.Certificate.data = fs.readFileSync(file.Certificate.path);
-        course.Certificate.contentType = file.Certificate.type;
-      } else {
-        return res.status(400).json({
-          error: "CERTIFICATE FORMAT SHOULD BE PNG/JPG/JPEG",
-        });
-      }
-    } else {
-      return res.status(400).json({
-        error: "Certificate is missing",
-      });
-    }
+    course.Certificate.data = fs.readFileSync(file.Certificate.path);
+    course.Certificate.contentType = file.Certificate.type;
 
     //save to the DB
     course.save((err, course) => {
@@ -129,29 +45,15 @@ exports.createCourse = (req, res) => {
   });
 };
 
-//completed
 exports.getCourse = (req, res) => {
   const { userCourseFetchId } = req.params;
   Course.find({ user: userCourseFetchId })
     .select("-user -__v -Certificate")
     .exec((err, course) => {
-      if (err) {
-        return res.status(400).json({
-          error: "COURSE CERTIFICATE NOT FOUND",
-        });
-      }
-      if (!course) {
-        return res.status(400).json({
-          message: "COURSE CERTIFICATE NOT ADDED",
-        });
-      }
-
       return res.send(course);
     });
 };
 
-//middleware
-//completed
 exports.photo = (req, res, next) => {
   if (req.course.Certificate !== null) {
     if (req.course.Certificate.data) {
@@ -162,7 +64,6 @@ exports.photo = (req, res, next) => {
   next();
 };
 
-//completed
 exports.deleteCourse = (req, res) => {
   let course = req.course;
   course.remove((err, deletedCourse) => {
@@ -205,12 +106,12 @@ exports.getCourseinAdmin = (req, res) => {
         });
       }
       if (course.length > 0) {
-          // Convert json to csv function
-          const csvData = csvjson.toCSV(JSON.stringify(course), {
-              headers: 'key'
-          });
-        
-          zip.file("OnlineCourse.csv",csvData);
+        // Convert json to csv function
+        const csvData = csvjson.toCSV(JSON.stringify(course), {
+          headers: "key",
+        });
+
+        zip.file("OnlineCourse.csv", csvData);
         Course.find({ Batch: year })
           .select(["Register Number", "Certificate"])
           .exec((err, dataBlog) => {
@@ -242,19 +143,15 @@ exports.getCourseinAdmin = (req, res) => {
                 },
               })
               .then(function (content) {
-                res.set( {
+                res.set({
                   "Content-Type": "application/zip",
                 });
-               return  res.end(
-                  content
-                );
+                return res.end(content);
               });
           });
-      }
-      else{
-
+      } else {
         return res.json({
-          "err":"SDFAsd"
+          err: "SDFAsd",
         });
       }
     });

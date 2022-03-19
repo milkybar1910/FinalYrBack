@@ -11,7 +11,6 @@ const studentSchema = new mongoose.Schema(
 
     "Roll Number": {
       type: String,
-      required: true,
     },
 
     Title: {
@@ -76,107 +75,138 @@ const studentSchema = new mongoose.Schema(
     //12th related
     "Twelfth Percentage": {
       type: String,
+      default: "00.00",
     },
     "Twelfth Board Of Study": {
       type: String,
+      default: "NA",
     },
     "Twelfth Medium Of Study": {
       type: String,
+      default: "NA",
     },
     "Twelfth Year Of Passing": {
       type: String,
+      default: "0000",
     },
     "Twelfth School Name": {
       type: String,
+      default: "NA",
     },
     "Twelfth Graduating State": {
       type: String,
+      default: "NA",
     },
 
     //Diploma related
     "Diploma Specilazation OR Branch": {
       type: String,
+      default: "NA",
     },
     "Diploma Percentage": {
       type: String,
+      default: "0.00",
     },
     "Diploma Year Of Passing": {
       type: String,
+      default: "0000",
     },
     "Name Of Institute": {
       type: String,
+      default: "NA",
     },
     "Diploma Graduating State": {
       type: String,
+      default: "NA",
     },
 
     //sem related
     "Sem 1 GPA": {
       type: String,
+      default: "0.00",
     },
     "Sem 2 GPA": {
       type: String,
+      default: "0.00",
     },
     "Sem 3 GPA": {
       type: String,
+      default: "0.00",
     },
     "Sem 4 GPA": {
       type: String,
+      default: "0.00",
     },
     "Sem 5 GPA": {
       type: String,
+      default: "0.00",
     },
     "Sem 6 GPA": {
       type: String,
+      default: "0.00",
     },
     "Sem 7 GPA": {
       type: String,
+      default: "0.00",
     },
     "Sem 8 GPA": {
       type: String,
+      default: "0.00",
     },
     "Overall CGPA": {
       type: String,
+      default: "0.00",
     },
 
     // arrear related
     "Number Of Arrears Sem 1": {
       type: String,
+      default: "0",
     },
     "Number Of Arrears Sem 2": {
       type: String,
+      default: "0",
     },
     "Number Of Arrears Sem 3": {
       type: String,
+      default: "0",
     },
     "Number Of Arrears Sem 4": {
       type: String,
+      default: "0",
     },
     "Number Of Arrears Sem 5": {
       type: String,
+      default: "0",
     },
     "Number Of Arrears Sem 6": {
       type: String,
+      default: "0",
     },
     "Number Of Arrears Sem 7": {
       type: String,
+      default: "0",
     },
     "Number Of Arrears Sem 8": {
       type: String,
+      default: "0",
     },
     "Total Number Of Standing Arrears": {
       type: String,
+      default: "0",
     },
     "Is History Of Arrears": {
       type: String,
     },
     "Number Of History Of Arrears": {
       type: String,
+      default: "0",
     },
 
     //contact related
     "Land Line Number": {
       type: String,
+      default: "0000000000",
     },
     "Primary Number": {
       type: String,
@@ -198,9 +228,11 @@ const studentSchema = new mongoose.Schema(
 
     "BEC Status": {
       type: String,
+      default: "NA",
     },
     "BEC Grade": {
       type: String,
+      default: "NA",
     },
 
     "Languages Known": {
@@ -208,6 +240,7 @@ const studentSchema = new mongoose.Schema(
     },
     "Gap In Education": {
       type: String,
+      default: "0",
     },
     "Is Higher Studies": {
       type: String,
@@ -216,51 +249,65 @@ const studentSchema = new mongoose.Schema(
     //TODO: Skill
     "Skill Set": {
       type: String,
+      default: "NA",
     },
 
     "PAN Number": {
       type: String,
+      default: "NA",
     },
     Nationality: {
       type: String,
     },
     "Indian Passport Number": {
       type: String,
+      default: "NA",
     },
     "Aadhaar Number": {
       type: String,
+      default: "NA",
     },
 
     "Father Name": {
       type: String,
+      default: "NA",
     },
     "Father Designation": {
       type: String,
+      default: "NA",
     },
     "Father Organization": {
       type: String,
+      default: "NA",
     },
     "Father Mobile Number": {
       type: String,
+      default: "0000000000",
     },
     "Father Mail ID": {
       type: String,
+      default: "NA",
     },
 
     "Mother Name": {
       type: String,
+      default: "NA",
     },
     "Mother Designation": {
       type: String,
+      default: "NA",
     },
     "Mother Organization": {
       type: String,
+      default: "NA",
     },
     "Mother Mobile Number": {
       type: String,
+      default: "0000000000",
     },
     "Mother Mail ID": {
       type: String,
+      default: "NA",
     },
 
     "Permanent Address": {
@@ -302,10 +349,19 @@ const studentSchema = new mongoose.Schema(
       default: 0,
     },
     properties: [],
+    CoverPhoto: {
+      data: Buffer,
+      contentType: String,
+    },
+    ProfilePhoto: {
+      data: Buffer,
+      contentType: String,
+    },
   },
   {
     timestamps: true,
   },
+
   { strict: false }
 );
 

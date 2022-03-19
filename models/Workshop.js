@@ -11,6 +11,12 @@ const WorkshopSchema = new mongoose.Schema({
   Duration: {
     type: String,
   },
+  "From Date": {
+    type: String,
+  },
+  "To Date": {
+    type: String,
+  },
   Batch: {
     type: String,
   },
@@ -18,9 +24,6 @@ const WorkshopSchema = new mongoose.Schema({
     type: String,
   },
   "Full Name": {
-    type: String,
-  },
-  Date: {
     type: String,
   },
   Certificate: {
